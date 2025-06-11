@@ -1,11 +1,21 @@
 import { useState, useEffect } from "react";
 import { TodoForm } from "./components/TodoForm";
 import { TodoList } from "./components/TodoList";
+import { TodoFilter } from "./components/TodoFilter";
 
 function App() {
   const [todos, setTodos] = useState(() => {
     const guardarTodos = localStorage.getItem("todos");
     return guardarTodos ? JSON.parse(guardarTodos) : [];
+  });
+
+  const [filter, setFilter] = useState("none");
+
+  const filteredTodos = todos.filter((todo) => {
+    if (filter === "completada") return todo.completed;
+    if (filter === "pendiente") return !todo.completed;
+    if (filter === "all") return true;
+    return false;
   });
 
   useEffect(() => {
@@ -17,6 +27,7 @@ function App() {
       id: Date.now(),
       text,
       completed: false,
+      createdAt: new Date().toISOString(),
     };
     setTodos([...todos, newTodo]);
   };
@@ -37,11 +48,12 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-100 py-8">
-      <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
+      <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md overflow-hidden">
         <h1 className="text-2x1 font-bold text-center mb-6">Lista de tareas</h1>
         <TodoForm addTodo={addTodo} />
+        <TodoFilter filter={filter} setFilter={setFilter} />
         <TodoList
-          todos={todos}
+          todos={filteredTodos}
           tareaCompleta={tareaCompletada}
           eliminarTarea={eliminarTarea}
           actualizarTarea={actualizarTarea}

@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
-export const TodoItem = ({ todo, tareaCompleta, eliminarTarea, actualizarTarea }) => {
+export const TodoItem = ({ todo, tareaCompleta, eliminarTarea, actualizarTarea, index }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editarTexto, setEditarTexto] = useState(todo.text);
 
@@ -19,54 +19,77 @@ export const TodoItem = ({ todo, tareaCompleta, eliminarTarea, actualizarTarea }
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      handleSave();
-    }
+    if (e.key === "Enter") handleSave();
+    if (e.key === "Escape") setIsEditing(false);
   };
 
   return (
     <motion.div
-      initial={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -100 }}
-      transition={{ duration: 0.3 }}
+      initial={{ opacity: 1, y: -20 }}
+      exit={{ opacity: 0, y: 0 }}
+      transition={{ duration: 0.3, delay: index * 0.05 }}
       className="flex items-center justify-between p-3 border-b hover:bg-gray-50"
     >
-      <div className="flex items-center space-x-2 flex-grow">
-        <input
-          type="checkbox"
-          checked={todo.completed}
-          onChange={() => tareaCompleta(todo.id)}
-          className="h-5 w-5 rounded text-blue-500 focus:ring-blue-400"
-        />
-
-        {isEditing ? (
-          <input
-            type="text"
-            value={editarTexto}
-            onChange={(e) => setEditarTexto(e.target.value)}
-            onBlur={handleSave}
-            onKeyDown={handleKeyDown}
-            autoFocus
-            className="px-2 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-blue500 flex-grow"
-          />
-        ) : (
-          <span
-            onDoubleClick={handleEdit}
-            className={`${
-              todo.completed ? "line-through text-gray-400" : "text-gray-800"
-            } flex-grow cursor.pointer`}
-          >
-            {todo.text}
-          </span>
-        )}
+      <div className="flex items-center space-x-3    flex-grow">
+        <span className="text-gray-400 text-sm w-6">{index + 1}.</span>
+        <AnimatePresence mode="wait">
+          {isEditing ? (
+            <motion.input
+              key="edit-input"
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1, backgroundColor: "#f0f9ff" }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              type="text"
+              value={editarTexto}
+              onChange={(e) => setEditarTexto(e.target.value)}
+              onBlur={handleSave}
+              onKeyDown={handleKeyDown}
+              autoFocus
+              className="px-2 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-blue-500 flex-grow"
+            />
+          ) : (
+            <motion.span
+              key="text-display"
+              initial={{ scale: 1, opacity: 1 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onDoubleClick={handleEdit}
+              className={`${
+                todo.completed ? "line-through text-gray-400" : "text-gray-800"
+              } flex-grow cursor-pointer`}
+            >
+              {todo.text}
+            </motion.span>
+          )}
+        </AnimatePresence>
       </div>
 
-      <button
-        onClick={() => eliminarTarea(todo.id)}
-        className="text-red-500 hover:text.red-700 ml-2"
-      >
-        🗑️
-      </button>
+      <div className="flex space-x-2">
+        {todo.completed ? (
+          <button
+            onClick={() => tareaCompleta(todo.id)}
+            className="px-3 py-1 bg-green-100 text-green-700 rounded-md hover:bg-green-200 transition"
+          >
+            Pendiente
+          </button>
+        ) : (
+          <button
+            onClick={() => tareaCompleta(todo.id)}
+            className="px-3 py-1 bg-blue-100 text-blue-700 rounded.md hover:bg-blue-200 transition"
+          >
+            ✅ Completada
+          </button>
+        )}
+
+        <button
+          onClick={() => eliminarTarea(todo.id)}
+          className="px-3 py-1 bg-red-100 text-red-700 rounded-md hover:bg-red-200 transition"
+        >
+          🗑️ Eliminar
+        </button>
+      </div>
     </motion.div>
   );
 };
