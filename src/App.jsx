@@ -4,23 +4,54 @@ import { TodoList } from "./components/TodoList";
 import { TodoFilter } from "./components/TodoFilter";
 
 function App() {
-  const [todos, setTodos] = useState(() => {
-    const guardarTodos = localStorage.getItem("todos");
-    return guardarTodos ? JSON.parse(guardarTodos) : [];
+  const [activeTodos, setActiveTodos] = useState(() => {
+    const saved = localStorage.getItem("activeTodos");
+    return saved ? JSON.parse(saved) : [];
   });
 
-  const [filter, setFilter] = useState("none");
-
-  const filteredTodos = todos.filter((todo) => {
-    if (filter === "completada") return todo.completed;
-    if (filter === "pendiente") return !todo.completed;
-    if (filter === "all") return true;
-    return false;
+  const [completedTodos, setCompletedTodos] = useState(() => {
+    const saved = localStorage.getItem("completedTodos");
+    return saved ? JSON.parse(saved) : [];
   });
+
+  const [filter, setFilter] = useState("pendientes");
 
   useEffect(() => {
-    localStorage.setItem("todos", JSON.stringify(todos));
-  }, [todos]);
+    localStorage.setItem("activeTodos", JSON.stringify(activeTodos));
+    localStorage.setItem("completedTodos", JSON.stringify(completedTodos));
+  }, [activeTodos, completedTodos]);
+
+  const toggleComplete = (id) => {
+    const todoIndex = activeTodos.findIndex((todo) => todo.id === id);
+
+    if (todoIndex >= 0) {
+      const todo = activeTodos[todoIndex];
+      setCompletedTodos([
+        ...completedTodos,
+        { ...todo, completed: true, completedAt: new Date().toISOString() },
+      ]);
+      setActiveTodos(activeTodos.filter((todo) => todo.id !== id));
+    } else {
+      const todo = completedTodos.find((t) => t.id === id);
+      if (todo) {
+        setActiveTodos([...activeTodos, { ...todo, completed: false }]);
+        setCompletedTodos(completedTodos.filter((t) => t.id !== id));
+      }
+    }
+  };
+
+  const filteredTodos = () => {
+    switch (filter) {
+      case "completadas":
+        return completedTodos;
+      case "pendientes":
+        return activeTodos;
+      case "todas":
+        return [...activeTodos, ...completedTodos];
+      default:
+        return activeTodos;
+    }
+  };
 
   const addTodo = (text) => {
     const newTodo = {
@@ -29,37 +60,38 @@ function App() {
       completed: false,
       createdAt: new Date().toISOString(),
     };
-    setTodos([...todos, newTodo]);
+    setActiveTodos([...activeTodos, newTodo]);
   };
 
-  const tareaCompletada = (id) => {
-    setTodos(
-      todos.map((todo) => (todo.id === id ? { ...todo, completed: !todo.completed } : todo))
+  const deleteTodo = (id) => {
+    setActiveTodos(activeTodos.filter((todo) => todo.id !== id));
+    setCompletedTodos(completedTodos.filter((todo) => todo.id !== id));
+  };
+
+  const updateTodo = (id, nuevoTexto) => {
+    setActiveTodos(
+      activeTodos.map((todo) => (todo.id === id ? { ...todo, text: nuevoTexto } : todo))
     );
-  };
-
-  const eliminarTarea = (id) => {
-    setTodos(todos.filter((todo) => todo.id != id));
-  };
-
-  const actualizarTarea = (id, nuevoTexto) => {
-    setTodos(todos.map((todo) => (todo.id === id ? { ...todo, text: nuevoTexto } : todo)));
+    setCompletedTodos(
+      completedTodos.map((todo) => (todo.id === id ? { ...todo, text: nuevoTexto } : todo))
+    );
   };
 
   return (
     <div className="min-h-screen bg-gray-100 py-8">
       <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md overflow-hidden">
-        <h1 className="text-2x1 font-bold text-center mb-6">Lista de tareas</h1>
+        <h1 className="text-2xl font-bold text-center mb-6">Lista de tareas</h1>
         <TodoForm addTodo={addTodo} />
         <TodoFilter filter={filter} setFilter={setFilter} />
         <TodoList
-          todos={filteredTodos}
-          tareaCompleta={tareaCompletada}
-          eliminarTarea={eliminarTarea}
-          actualizarTarea={actualizarTarea}
+          todos={filteredTodos()}
+          toggleComplete={toggleComplete}
+          deleteTodo={deleteTodo}
+          updateTodo={updateTodo}
         />
       </div>
     </div>
   );
 }
+
 export default App;

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export const TodoItem = ({ todo, tareaCompleta, eliminarTarea, actualizarTarea, index }) => {
+export const TodoItem = ({ todo, toggleComplete, deleteTodo, updateTodo, index }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editarTexto, setEditarTexto] = useState(todo.text);
 
@@ -11,9 +11,9 @@ export const TodoItem = ({ todo, tareaCompleta, eliminarTarea, actualizarTarea, 
 
   const handleSave = () => {
     if (editarTexto.trim() === "") {
-      eliminarTarea(todo.id);
+      deleteTodo(todo.id);
     } else {
-      actualizarTarea(todo.id, editarTexto);
+      updateTodo(todo.id, editarTexto);
     }
     setIsEditing(false);
   };
@@ -67,24 +67,15 @@ export const TodoItem = ({ todo, tareaCompleta, eliminarTarea, actualizarTarea, 
       </div>
 
       <div className="flex space-x-2">
-        {todo.completed ? (
-          <button
-            onClick={() => tareaCompleta(todo.id)}
-            className="px-3 py-1 bg-green-100 text-green-700 rounded-md hover:bg-green-200 transition"
-          >
-            Pendiente
-          </button>
-        ) : (
-          <button
-            onClick={() => tareaCompleta(todo.id)}
-            className="px-3 py-1 bg-blue-100 text-blue-700 rounded.md hover:bg-blue-200 transition"
-          >
-            ✅ Completada
-          </button>
-        )}
+        <button
+          onClick={() => toggleComplete(todo.id)}
+          className="px-3 py-1 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition"
+        >
+          ✅ Completada
+        </button>
 
         <button
-          onClick={() => eliminarTarea(todo.id)}
+          onClick={() => deleteTodo(todo.id)}
           className="px-3 py-1 bg-red-100 text-red-700 rounded-md hover:bg-red-200 transition"
         >
           🗑️ Eliminar

@@ -1,18 +1,21 @@
 import { TodoItem } from "./TodoItem";
 import { AnimatePresence } from "framer-motion";
 
-export const TodoList = ({ todos }) => {
+export const TodoList = ({ todos, toggleComplete, deleteTodo, updateTodo }) => {
   return (
     <div className="mt-4">
-      {todos.length === 0 ? (
-        <p className="text-center text-gray-500 py-4"> No tenes tareas pendientes.</p>
-      ) : (
-        <AnimatePresence>
-          {todos.map((todo, index) => (
-            <TodoItem key={todo.id} todo={todo} index={todos.length - 1 - index} />
-          ))}
-        </AnimatePresence>
-      )}
+      <AnimatePresence>
+        {todos.map((todo, index) => (
+          <TodoItem
+            key={todo.id}
+            todo={todo}
+            index={index}
+            toggleComplete={toggleComplete}
+            deleteTodo={deleteTodo}
+            updateTodo={updateTodo}
+          />
+        ))}
+      </AnimatePresence>
     </div>
   );
 };
