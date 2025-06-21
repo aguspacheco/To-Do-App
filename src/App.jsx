@@ -78,11 +78,28 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-8">
-      <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md overflow-hidden">
-        <h1 className="text-2xl font-bold text-center mb-6">Lista de tareas</h1>
+    <div className="min-h-screen bg-gray-50 py-8 px-4">
+      <div className="max-w-md mx-auto bg-white rounded-lg shadow-sm border border-gray-200">
+        <div className="p-4 border-b border-gray-200"></div>
+        <h1 className="text-xl font-semibold text-gray-800">Lista de tareas</h1>
+      </div>
+
+      <div className="p-4 border-b border-gray-200">
         <TodoForm addTodo={addTodo} />
+      </div>
+
+      <div className="p-4 border-b border-gray-200 flex justify-between items-center">
+        <div className="flex space-x-4 text-sm">
+          <span className="text-gray-600">
+            Todas ({activeTodos.length + completedTodos.length})
+          </span>
+          <span className="text-gray-600">Completadas ({completedTodos.length})</span>
+          <span className="text-gray-600">Pendientes ({activeTodos.length})</span>
+        </div>
         <TodoFilter filter={filter} setFilter={setFilter} />
+      </div>
+
+      <div className="divide-y divide-gray-200">
         <TodoList
           todos={filteredTodos()}
           toggleComplete={toggleComplete}

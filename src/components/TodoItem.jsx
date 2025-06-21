@@ -1,84 +1,53 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
-export const TodoItem = ({ todo, toggleComplete, deleteTodo, updateTodo, index }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [editarTexto, setEditarTexto] = useState(todo.text);
-
-  const handleEdit = () => {
-    setIsEditing(true);
-  };
-
-  const handleSave = () => {
-    if (editarTexto.trim() === "") {
-      deleteTodo(todo.id);
-    } else {
-      updateTodo(todo.id, editarTexto);
-    }
-    setIsEditing(false);
-  };
-
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") handleSave();
-    if (e.key === "Escape") setIsEditing(false);
-  };
-
+export const TodoItem = ({ todo, toggleComplete, deleteTodo }) => {
   return (
     <motion.div
-      initial={{ opacity: 1, y: -20 }}
-      exit={{ opacity: 0, y: 0 }}
-      transition={{ duration: 0.3, delay: index * 0.05 }}
-      className="flex items-center justify-between p-3 border-b hover:bg-gray-50"
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+      className="px-4 py-3 hover:bg-gray-50"
     >
-      <div className="flex items-center space-x-3    flex-grow">
-        <span className="text-gray-400 text-sm w-6">{index + 1}.</span>
-        <AnimatePresence mode="wait">
-          {isEditing ? (
-            <motion.input
-              key="edit-input"
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1, backgroundColor: "#f0f9ff" }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              type="text"
-              value={editarTexto}
-              onChange={(e) => setEditarTexto(e.target.value)}
-              onBlur={handleSave}
-              onKeyDown={handleKeyDown}
-              autoFocus
-              className="px-2 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-blue-500 flex-grow"
-            />
-          ) : (
-            <motion.span
-              key="text-display"
-              initial={{ scale: 1, opacity: 1 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              onDoubleClick={handleEdit}
-              className={`${
-                todo.completed ? "line-through text-gray-400" : "text-gray-800"
-              } flex-grow cursor-pointer`}
-            >
-              {todo.text}
-            </motion.span>
-          )}
-        </AnimatePresence>
-      </div>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-3 flex-grow">
+          <button
+            onClick={() => toggleComplete(todo.id)}
+            className={`w-5 h-5 rounded border flex items-center justify-center ${
+              todo.completed
+                ? "bg-green-100 border-green-300 text-green-600"
+                : `border-gray-300 hover:border-blue-400`
+            }`}
+          >
+            {todo.completed && "✔"}
+          </button>
 
-      <div className="flex space-x-2">
-        <button
-          onClick={() => toggleComplete(todo.id)}
-          className="px-3 py-1 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition"
-        >
-          ✅ Completada
-        </button>
+          <span
+            className={`flex-grow ${
+              todo.completed ? "line-through text-gray-400" : "text-gray-700"
+            }`}
+          >
+            {todo.text}
+          </span>
+        </div>
 
         <button
           onClick={() => deleteTodo(todo.id)}
-          className="px-3 py-1 bg-red-100 text-red-700 rounded-md hover:bg-red-200 transition"
+          className="text-gray-400 hover:text-red-500 transition"
         >
-          🗑️ Eliminar
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fillRule="evenodd"
+              d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+              clipRule="evenood"
+            />
+          </svg>
         </button>
       </div>
     </motion.div>
