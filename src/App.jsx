@@ -3,6 +3,7 @@ import { TodoForm } from "./components/TodoForm";
 import { TodoList } from "./components/TodoList";
 import { TodoFilter } from "./components/TodoFilter";
 import "./index.css";
+import "./App.css";
 
 function App() {
   const [activeTodos, setActiveTodos] = useState(() => {
@@ -79,26 +80,33 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-100 to-white py-10 px-6">
-      <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden">
-        <header className="bg-gradient-to-r from-blue-600 to-indigo-600 p-6">
-          <h1 className="text-2xl font-bold text-white tracking-wide">Lista de Tareas</h1>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 py-10 px-4">
+      <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden border border-purple-200">
+        <header className="bg-gradient-to-r from-purple-600 to-indigo-600 p-6">
+          <h1 className="text-3xl font-bold text-white text-center tracking-tight">Mis Tareas</h1>
+          <p className="text-purple-100 text-center mt-1">Organiza tu día con eficiencia</p>
         </header>
 
-        <div className="p-6 border-b border-gray-100">
+        <div className="p-6 border-b border-purple-100">
           <TodoForm addTodo={addTodo} />
         </div>
 
-        <div className="px-6 py-4 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <div className="flex space-x-4 text-sm text-gray-600">
-            <span>Todas ({activeTodos.length + completedTodos.length})</span>
-            <span>Completadas ({completedTodos.length})</span>
-            <span>Pendientes ({activeTodos.length})</span>
+        <div className="px-6 py-4 border-b border-purple-100 bg-purple-50 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="flex space-x-4 text-sm">
+            <span className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full">
+              Todas: {activeTodos.length + completedTodos.length}
+            </span>
+            <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full">
+              Completadas: {completedTodos.length}
+            </span>
+            <span className="bg-amber-100 text-amber-800 px-1 py-3 rounded-full">
+              Pendientes: {activeTodos.length}
+            </span>
           </div>
           <TodoFilter filter={filter} setFilter={setFilter} />
         </div>
 
-        <div className="divide-y divide-gray-100">
+        <div className="divide-y divide-purple-100">
           <TodoList
             todos={filteredTodos()}
             toggleComplete={toggleComplete}

@@ -2,16 +2,16 @@ export const TodoFilter = ({ filter, setFilter }) => {
   const filtros = ["todas", "pendientes", "completadas"];
 
   return (
-    <div className="inline-flex items-center bg-gray-100 rounded-full p-1 shadow-inner">
+    <div className="inline-flex items-center bg-purple-100 rounded-full p-1 shadow-inner">
       {filtros.map((filtro) => (
         <button
           key={filtro}
           onClick={() => setFilter(filtro)}
-          className={`px-4 py-1.5 text-sm rounded-full transition-colors duration-200 capitalize
+          className={`px-4 py-1.5 text-sm rounded-full transition-all duration-200 capitalize font-medium
             ${
               filter === filtro
-                ? "bg-blue-600 text-white shadow-md"
-                : "text-gray-700 hover:bg-white hover:text-blue-600"
+                ? "bg-purple-600 text-white shadow-md"
+                : "text-purple-700 hover:bg-white hover:text-purple-600"
             }`}
         >
           {filtro}
