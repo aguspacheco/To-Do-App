@@ -3,14 +3,12 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Reset básico */
 body {
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Estilos para el scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }

@@ -1,0 +1,38 @@
+.todo-list-container {
+  margin-top: 1rem;
+}
+
+.todo-list-animation-container {
+  position: relative;
+}
+
+.todo-list-empty-message {
+  text-align: center;
+  color: #6b7280;
+  padding: 1.5rem 0;
+  font-size: 1.125rem;
+}
+
+.todo-list-item-enter {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.todo-list-item-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.todo-list-item-exit {
+  opacity: 1;
+}
+
+.todo-list-item-exit-active {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.todo-list-item:not(:last-child) {
+  margin-bottom: 0.25rem;
+}

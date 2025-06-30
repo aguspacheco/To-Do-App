@@ -1,43 +1,33 @@
 import { motion } from "framer-motion";
+import "./TodoItem.css";
 
 export const TodoItem = ({ todo, toggleComplete, deleteTodo }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.2 }}
-      className="px-4 py-3 hover:bg-gray-100 transition duration-200"
+      initial="todo-animate-in"
+      animate="todo-animate-show"
+      exit="todo-animate-out"
+      transition="todo-transition"
+      className="todo-item"
     >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-3 flex-grow">
+      <div className="todo-content">
+        <div className="todo-text-container">
           <button
             onClick={() => toggleComplete(todo.id)}
-            className={`w-6 h-6 rounded-full border flex items-center justify-center transition-all ${
-              todo.completed
-                ? "bg-green-200 border-green-400 text-green-800"
-                : "border-gray-300 hover:border-blue-400 hover:bg-blue-100"
-            }`}
+            className={`todo-checkbox ${todo.completed ? "completed" : "incomplete"}`}
           >
             {todo.completed && "✔"}
           </button>
 
-          <span
-            className={`flex-grow text-lg ${
-              todo.completed ? "line-through text-gray-400" : "text-gray-700"
-            }`}
-          >
+          <span className={`todo-text ${todo.completed ? "completed" : "incomplete"}`}>
             {todo.text}
           </span>
         </div>
 
-        <button
-          onClick={() => deleteTodo(todo.id)}
-          className="text-gray-400 hover:text-red-600 transition"
-        >
+        <button onClick={() => deleteTodo(todo.id)} className="todo-delete-btn">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
+            className="todo-delete-icon"
             viewBox="0 0 20 20"
             fill="currentColor"
           >
