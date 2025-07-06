@@ -19,8 +19,12 @@ function App() {
   const [filter, setFilter] = useState("pendientes");
 
   useEffect(() => {
-    localStorage.setItem("activeTodos", JSON.stringify(activeTodos));
-    localStorage.setItem("completedTodos", JSON.stringify(completedTodos));
+    try {
+      localStorage.setItem("activeTodos", JSON.stringify(activeTodos));
+      localStorage.setItem("completedTodos", JSON.stringify(completedTodos));
+    } catch (error) {
+      console.error("Error al guardar en localStorage:", error);
+    }
   }, [activeTodos, completedTodos]);
 
   const toggleComplete = (id) => {
@@ -56,13 +60,17 @@ function App() {
   };
 
   const addTodo = (text) => {
-    const newTodo = {
-      id: Date.now(),
-      text,
-      completed: false,
-      createdAt: new Date().toISOString(),
-    };
-    setActiveTodos([...activeTodos, newTodo]);
+    try {
+      const newTodo = {
+        id: Date.now(),
+        text,
+        completed: false,
+        createdAt: new Date().toISOString(),
+      };
+      setActiveTodos((prev) => [...prev, newTodo]);
+    } catch (error) {
+      console.error("Error al agregar tarea:", error);
+    }
   };
 
   const deleteTodo = (id) => {
@@ -92,20 +100,16 @@ function App() {
         </div>
 
         <div className="px-6 py-4 border-b border-purple-100 bg-purple-50 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <div className="flex space-x-4 text-sm">
-            <span className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full">
-              Todas: {activeTodos.length + completedTodos.length}
-            </span>
-            <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full">
-              Completadas: {completedTodos.length}
-            </span>
-            <span className="bg-amber-100 text-amber-800 px-1 py-3 rounded-full">
-              Pendientes: {activeTodos.length}
-            </span>
-          </div>
-          <TodoFilter filter={filter} setFilter={setFilter} />
+          <TodoFilter
+            filter={filter}
+            setFilter={setFilter}
+            counts={{
+              all: activeTodos.lenght + completedTodos.lenght,
+              pending: activeTodos.lenght,
+              completed: completedTodos.lenght,
+            }}
+          />
         </div>
-
         <div className="divide-y divide-purple-100">
           <TodoList
             todos={filteredTodos()}
