@@ -1,32 +1,33 @@
-export const TodoFilter = ({
-  filter,
-  setFilter,
-  counts = {
-    all: 0,
-    pending: 0,
-    completed: 0,
-  },
-}) => {
-  const filters = [
-    { type: "todas", label: `Todas: ${counts.all}` },
-    { type: "pendientes", label: `Pendientes: ${counts.pending}` },
-    { type: "completadas", label: `Completadas: ${counts.completed}` },
+export const TodoFilter = ({ filter, setFilter, activeCount = 0, completedCount = 0 }) => {
+  const filterOptions = [
+    {
+      type: "todas",
+      label: `Todas: ${activeCount + completedCount}`,
+    },
+    {
+      type: "pendientes",
+      label: `Pendientes: ${activeCount}`,
+    },
+    {
+      type: "compeltadas",
+      label: `Completadas: ${completedCount}`,
+    },
   ];
 
   return (
-    <div className="flex flex-wrap gap-2 justify-center bg-purple-50 p-2 rounded-lg">
-      {filters.map(({ type, label }) => (
+    <div className="flex flex-wrap gap-2">
+      {filterOptions.map((option) => (
         <button
-          key={type}
-          onClick={() => setFilter(type)}
-          className={`px-4 py-2 rounded-lg font-medium transition-all duration-200
+          key={option.type}
+          onClick={() => setFilter(option.type)}
+          className={`px-4 py-2 text-sm rounded-full font.medium transition-colors
             ${
-              filter === type
-                ? "bg-purple-600 text-white shadow-md"
-                : "bg-white text-purple-600 border border-purple-200 hover:bg-purple-100"
+              filter === option.type
+                ? "bg-purple-600 text-white"
+                : "bg-white text-purple-600 hover:bg-purple-50"
             }`}
         >
-          {label}
+          {option.label}
         </button>
       ))}
     </div>

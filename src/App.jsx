@@ -6,118 +6,104 @@ import "./index.css";
 import "./App.css";
 
 function App() {
-  const [activeTodos, setActiveTodos] = useState(() => {
-    const saved = localStorage.getItem("activeTodos");
-    return saved ? JSON.parse(saved) : [];
-  });
-
-  const [completedTodos, setCompletedTodos] = useState(() => {
-    const saved = localStorage.getItem("completedTodos");
-    return saved ? JSON.parse(saved) : [];
+  const [todos, setTodos] = useState(() => {
+    try {
+      const saved = localStorage.getItem("todos");
+      const data = saved ? JSON.parse(saved) : null;
+      return {
+        active: data?.active || [],
+        completed: data?.completed || [],
+      };
+    } catch {
+      return { active: [], completed: [] };
+    }
   });
 
   const [filter, setFilter] = useState("pendientes");
 
   useEffect(() => {
-    try {
-      localStorage.setItem("activeTodos", JSON.stringify(activeTodos));
-      localStorage.setItem("completedTodos", JSON.stringify(completedTodos));
-    } catch (error) {
-      console.error("Error al guardar en localStorage:", error);
-    }
-  }, [activeTodos, completedTodos]);
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }, [todos]);
+
+  const addTodo = (text) => {
+    const newTodo = {
+      id: Date.now(),
+      text,
+      completed: false,
+      createdAt: new Date().toISOString(),
+    };
+
+    setTodos((prev) => ({
+      ...prev,
+      active: [...prev.active, newTodo],
+    }));
+  };
 
   const toggleComplete = (id) => {
-    const todoIndex = activeTodos.findIndex((todo) => todo.id === id);
-
-    if (todoIndex >= 0) {
-      const todo = activeTodos[todoIndex];
-      setCompletedTodos([
-        ...completedTodos,
-        { ...todo, completed: true, completedAt: new Date().toISOString() },
-      ]);
-      setActiveTodos(activeTodos.filter((todo) => todo.id !== id));
-    } else {
-      const todo = completedTodos.find((t) => t.id === id);
-      if (todo) {
-        setActiveTodos([...activeTodos, { ...todo, completed: false }]);
-        setCompletedTodos(completedTodos.filter((t) => t.id !== id));
+    setTodos((prev) => {
+      const activeIndex = prev.active.findIndex((todo) => todo.id === id);
+      if (activeIndex >= 0) {
+        const todo = prev.active[activeIndex];
+        return {
+          active: prev.active.filter((t) => t.id !== id),
+          completed: [...prev.completed, { ...todo, completed: true }],
+        };
       }
-    }
+
+      const completedIndex = prev.completed.findIndex((todo) => todo.id === id);
+      if (completedIndex >= 0) {
+        const todo = prev.completed[completedIndex];
+        return {
+          active: [...prev.active, { ...todo, completed: false }],
+          completed: prev.completed.filter((t) => t.id !== id),
+        };
+      }
+      return prev;
+    });
+  };
+
+  const deleteTodo = (id) => {
+    setTodos((prev) => ({
+      active: prev.active.filter((todo) => todo.id !== id),
+      completed: prev.completed.filter((todo) => todo.id !== id),
+    }));
   };
 
   const filteredTodos = () => {
     switch (filter) {
       case "completadas":
-        return completedTodos;
+        return todos.completed;
       case "pendientes":
-        return activeTodos;
+        return todos.active;
       case "todas":
-        return [...activeTodos, ...completedTodos];
+        return [...todos.active, ...todos.completed];
       default:
-        return activeTodos;
+        return todos.active;
     }
-  };
-
-  const addTodo = (text) => {
-    try {
-      const newTodo = {
-        id: Date.now(),
-        text,
-        completed: false,
-        createdAt: new Date().toISOString(),
-      };
-      setActiveTodos((prev) => [...prev, newTodo]);
-    } catch (error) {
-      console.error("Error al agregar tarea:", error);
-    }
-  };
-
-  const deleteTodo = (id) => {
-    setActiveTodos(activeTodos.filter((todo) => todo.id !== id));
-    setCompletedTodos(completedTodos.filter((todo) => todo.id !== id));
-  };
-
-  const updateTodo = (id, nuevoTexto) => {
-    setActiveTodos(
-      activeTodos.map((todo) => (todo.id === id ? { ...todo, text: nuevoTexto } : todo))
-    );
-    setCompletedTodos(
-      completedTodos.map((todo) => (todo.id === id ? { ...todo, text: nuevoTexto } : todo))
-    );
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 py-10 px-4">
       <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden border border-purple-200">
         <header className="bg-gradient-to-r from-purple-600 to-indigo-600 p-6">
-          <h1 className="text-3xl font-bold text-white text-center tracking-tight">Mis Tareas</h1>
-          <p className="text-purple-100 text-center mt-1">Organiza tu día con eficiencia</p>
+          <h1 className="text-3xl font-bold text-white text-center">Mis Tareas</h1>
         </header>
 
         <div className="p-6 border-b border-purple-100">
           <TodoForm addTodo={addTodo} />
         </div>
 
-        <div className="px-6 py-4 border-b border-purple-100 bg-purple-50 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div className="px-6 py-4 border-b border-purple-100 bg-purple-50">
           <TodoFilter
             filter={filter}
             setFilter={setFilter}
-            counts={{
-              all: activeTodos.lenght + completedTodos.lenght,
-              pending: activeTodos.lenght,
-              completed: completedTodos.lenght,
-            }}
+            totalTodos={(todos.active?.length ?? 0) + (todos.completed?.length ?? 0)}
+            activeTodos={todos.active?.length ?? 0}
+            completedTodos={todos.completed?.length ?? 0}
           />
         </div>
-        <div className="divide-y divide-purple-100">
-          <TodoList
-            todos={filteredTodos()}
-            toggleComplete={toggleComplete}
-            deleteTodo={deleteTodo}
-            updateTodo={updateTodo}
-          />
-        </div>
+
+        <TodoList todos={filteredTodos()} toggleComplete={toggleComplete} deleteTodo={deleteTodo} />
       </div>
     </div>
   );
