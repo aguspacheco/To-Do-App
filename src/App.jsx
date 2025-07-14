@@ -97,9 +97,8 @@ function App() {
           <TodoFilter
             filter={filter}
             setFilter={setFilter}
-            totalTodos={(todos.active?.length ?? 0) + (todos.completed?.length ?? 0)}
-            activeTodos={todos.active?.length ?? 0}
-            completedTodos={todos.completed?.length ?? 0}
+            activeCount={todos.active.length}
+            completedCount={todos.completed.length}
           />
         </div>
 
