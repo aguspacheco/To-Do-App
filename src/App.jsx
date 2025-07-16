@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { TodoForm } from "./components/TodoForm";
 import { TodoList } from "./components/TodoList";
 import { TodoFilter } from "./components/TodoFilter";
+import ConfirmDeletePopup from "./components/ConfirmDeletePopup";
 import "./index.css";
 import "./App.css";
 
@@ -20,6 +21,8 @@ function App() {
   });
 
   const [filter, setFilter] = useState("pendientes");
+  const [showPopup, setShowPopup] = useState(false);
+  const [todoToDelete, setTodoToDelete] = useState(null);
 
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(todos));
@@ -63,10 +66,22 @@ function App() {
   };
 
   const deleteTodo = (id) => {
+    setShowPopup(true);
+    setTodoToDelete(id);
+  };
+
+  const confirmDelete = () => {
     setTodos((prev) => ({
-      active: prev.active.filter((todo) => todo.id !== id),
-      completed: prev.completed.filter((todo) => todo.id !== id),
+      active: prev.active.filter((todo) => todo.id !== todoToDelete),
+      completed: prev.completed.filter((todo) => todo.id !== todoToDelete),
     }));
+    setShowPopup(false);
+    setShowPopup(null);
+  };
+
+  const cancelDelete = () => {
+    setShowPopup(false);
+    setTodoToDelete(null);
   };
 
   const filteredTodos = () => {
@@ -103,6 +118,8 @@ function App() {
         </div>
 
         <TodoList todos={filteredTodos()} toggleComplete={toggleComplete} deleteTodo={deleteTodo} />
+
+        {showPopup && <ConfirmDeletePopup onConfirm={confirmDelete} onCancel={cancelDelete} />}
       </div>
     </div>
   );

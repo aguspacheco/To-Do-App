@@ -15,12 +15,12 @@ export const TodoFilter = ({ filter, setFilter, activeCount = 0, completedCount 
   ];
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex justify-center flex-wrap gap-2">
       {filterOptions.map((option) => (
         <button
           key={option.type}
           onClick={() => setFilter(option.type)}
-          className={`px-4 py-2 text-sm rounded-full font.medium transition-colors
+          className={`px-4 py-2 text-sm rounded-full font.medium transition-colors button
             ${
               filter === option.type
                 ? "bg-purple-600 text-white"

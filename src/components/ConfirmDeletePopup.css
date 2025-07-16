@@ -1,0 +1,45 @@
+.pop-container {
+  position: fixed;
+  top: 50%;
+  left: 40%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px #00000033;
+  padding: 20px;
+  z-index: 1000;
+  width: 300px;
+  max-width: 90%;
+}
+
+.popup-content {
+  text-align: center;
+}
+
+.popup-buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 10px;
+}
+
+.pop-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.yes-button {
+  background-color: #ff4d4d;
+  color: white;
+}
+
+.no-button {
+  background-color: #4caf50;
+  color: white;
+}
+
+.popup-button:hover {
+  opacity: 0.8;
+}

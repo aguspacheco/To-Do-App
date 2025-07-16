@@ -17,7 +17,7 @@ export const TodoForm = ({ addTodo }) => {
         type="text"
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
-        placeholder="Nueva tarea..."
+        placeholder="Escribi una nueva tarea..."
         className="todo-input"
       />
       <button type="submit" className="todo-submit-btn">

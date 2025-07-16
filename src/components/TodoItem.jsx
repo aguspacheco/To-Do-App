@@ -4,10 +4,10 @@ import "./TodoItem.css";
 export const TodoItem = ({ todo, toggleComplete, deleteTodo }) => {
   return (
     <motion.div
-      initial="todo-animate-in"
-      animate="todo-animate-show"
-      exit="todo-animate-out"
-      transition="todo-transition"
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
+      transition={{ duration: 0.3 }}
       className="todo-item"
     >
       <div className="todo-content">
