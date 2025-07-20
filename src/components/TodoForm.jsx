@@ -4,15 +4,16 @@ import "./TodoForm.css";
 export const TodoForm = ({ addTodo }) => {
   const [inputValue, setInputValue] = useState("");
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (inputValue.trim()) {
+      addTodo(inputValue.trim());
+      setInputValue("");
+    }
+  };
+
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        if (inputValue.trim()) addTodo(inputValue);
-        setInputValue("");
-      }}
-      className="todo-form"
-    >
+    <form onSubmit={handleSubmit} className="todo-form">
       <input
         type="text"
         value={inputValue}
@@ -20,7 +21,7 @@ export const TodoForm = ({ addTodo }) => {
         placeholder="Escribi una nueva tarea..."
         className="todo-input"
       />
-      <button type="submit" className="todo-submit-btn">
+      <button type="submit" className="todo-submit">
         ➕
       </button>
     </form>

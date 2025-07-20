@@ -29,11 +29,19 @@ function App() {
   }, [todos]);
 
   const addTodo = (text) => {
+    const exists =
+      todos.active.some((todo) => todo.text.toLowerCase() === text.toLowerCase()) ||
+      todos.completed.some((todo) => todo.text.toLowerCase() === text.toLowerCase());
+
+    if (exists) {
+      alert("La tarea ya fue cargada");
+      return;
+    }
+
     const newTodo = {
       id: Date.now(),
       text,
       completed: false,
-      createdAt: new Date().toISOString(),
     };
 
     setTodos((prev) => ({
