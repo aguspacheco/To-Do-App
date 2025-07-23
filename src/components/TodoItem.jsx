@@ -1,7 +1,16 @@
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import "./TodoItem.css";
 
-export const TodoItem = ({ todo, toggleComplete, deleteTodo }) => {
+export const TodoItem = ({ todo, toggleComplete, deleteTodo, editTodo }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editText, setEditText] = useState(todo.text);
+
+  const handleEdit = () => {
+    editTodo(todo.id, editText);
+    setIsEditing(false);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
@@ -19,25 +28,32 @@ export const TodoItem = ({ todo, toggleComplete, deleteTodo }) => {
             {todo.completed && "✔"}
           </button>
 
-          <span className={`todo-text ${todo.completed ? "completed" : "incomplete"}`}>
-            {todo.text}
-          </span>
+          {isEditing ? (
+            <input
+              type="text"
+              value={editText}
+              onChange={(e) => setEditText(e.target.value)}
+              onBlur={handleEdit}
+              onKeyPress={(e) => {
+                if (e.key === "Enter") handleEdit();
+              }}
+              className="todo-edit-input"
+            />
+          ) : (
+            <span className={`todo-text ${todo.completed ? "completed" : "incomplete"}`}>
+              {todo.text}
+            </span>
+          )}
         </div>
 
-        <button onClick={() => deleteTodo(todo.id)} className="todo-delete-btn">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="todo-delete-icon"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </button>
+        <div className="todo-actions">
+          <button onClick={() => setIsEditing(!isEditing)} className="todo-edit-btn">
+            ✏️
+          </button>
+          <button onClick={() => deleteTodo(todo.id)} className="todo-delete-btn">
+            🗑️
+          </button>
+        </div>
       </div>
     </motion.div>
   );

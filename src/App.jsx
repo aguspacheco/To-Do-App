@@ -78,6 +78,32 @@ function App() {
     setTodoToDelete(id);
   };
 
+  const editTodo = (id, newText) => {
+    setTodos((prev) => {
+      const activeTodoIndex = prev.active.findIndex((todo) => todo.id === id);
+      if (activeTodoIndex >= 0) {
+        const updatedActiveTodos = [...prev.active];
+        updatedActiveTodos[activeTodoIndex] = {
+          ...updatedActiveTodos[activeTodoIndex],
+          text: newText,
+        };
+        return { ...prev, active: updatedActiveTodos };
+      }
+
+      const completedTodoIndex = prev.completed.findIndex((todo) => todo.id === id);
+      if (completedTodoIndex >= 0) {
+        const updatedCompletedTodos = [...prev.completed];
+        updatedCompletedTodos[completedTodoIndex] = {
+          ...updatedCompletedTodos[completedTodoIndex],
+          text: newText,
+        };
+        return { ...prev, completed: updatedCompletedTodos };
+      }
+
+      return prev;
+    });
+  };
+
   const confirmDelete = () => {
     setTodos((prev) => ({
       active: prev.active.filter((todo) => todo.id !== todoToDelete),
@@ -106,29 +132,27 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 py-10 px-4">
-      <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden border border-purple-200">
-        <header className="bg-gradient-to-r from-purple-600 to-indigo-600 p-6">
-          <h1 className="text-3xl font-bold text-white text-center">Mis Tareas</h1>
-        </header>
+    <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden border border-purple-200">
+      <header className="bg-gradient-to-r from-purple-600 to-indigo-600 p-6">
+        <h1 className="text-3xl font-bold text-white text-center">Mis Tareas</h1>
+      </header>
 
-        <div className="p-6 border-b border-purple-100">
-          <TodoForm addTodo={addTodo} />
-        </div>
-
-        <div className="px-6 py-4 border-b border-purple-100 bg-purple-50">
-          <TodoFilter
-            filter={filter}
-            setFilter={setFilter}
-            activeCount={todos.active.length}
-            completedCount={todos.completed.length}
-          />
-        </div>
-
-        <TodoList todos={filteredTodos()} toggleComplete={toggleComplete} deleteTodo={deleteTodo} />
-
-        {showPopup && <ConfirmDeletePopup onConfirm={confirmDelete} onCancel={cancelDelete} />}
+      <div className="p-6 border-b border-purple-100">
+        <TodoForm addTodo={addTodo} />
       </div>
+
+      <div className="px-6 py-4 border-b border-purple-100 bg-purple-50">
+        <TodoFilter
+          filter={filter}
+          setFilter={setFilter}
+          activeCount={todos.active.length}
+          completedCount={todos.completed.length}
+        />
+      </div>
+
+      <TodoList todos={filteredTodos()} toggleComplete={toggleComplete} deleteTodo={deleteTodo} />
+
+      {showPopup && <ConfirmDeletePopup onConfirm={confirmDelete} onCancel={cancelDelete} />}
     </div>
   );
 }
