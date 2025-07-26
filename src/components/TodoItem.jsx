@@ -55,6 +55,10 @@ export const TodoItem = ({ todo, toggleComplete, deleteTodo, editTodo }) => {
           </button>
         </div>
       </div>
+
+      <div className="todo-itemstamp">
+        <small>Creado el: {todo.createdAt}</small>
+      </div>
     </motion.div>
   );
 };
