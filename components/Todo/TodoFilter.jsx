@@ -9,7 +9,7 @@ export const TodoFilter = ({ filter, setFilter, activeCount = 0, completedCount 
       label: `Pendientes: ${activeCount}`,
     },
     {
-      type: "compeltadas",
+      type: "completadas",
       label: `Completadas: ${completedCount}`,
     },
   ];
@@ -20,12 +20,8 @@ export const TodoFilter = ({ filter, setFilter, activeCount = 0, completedCount 
         <button
           key={option.type}
           onClick={() => setFilter(option.type)}
-          className={`px-4 py-2 text-sm rounded-full font.medium transition-colors button
-            ${
-              filter === option.type
-                ? "bg-purple-600 text-white"
-                : "bg-white text-purple-600 hover:bg-purple-50"
-            }`}
+          className={`px-4 py-2 text-sm rounded-full font-medium transition-colors button
+              `}
         >
           {option.label}
         </button>

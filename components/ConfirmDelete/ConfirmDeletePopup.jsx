@@ -1,4 +1,3 @@
-import React from "react";
 import "./confirmDeletePopup.css";
 import { motion } from "framer-motion";
 

@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { TodoForm } from "./components/TodoForm";
-import { TodoList } from "./components/TodoList";
-import { TodoFilter } from "./components/TodoFilter";
-import ConfirmDeletePopup from "./components/ConfirmDeletePopup";
+import { TodoForm } from "../components/Todo/TodoForm";
+import { TodoList } from "../components/Todo/TodoList";
+import { TodoFilter } from "../components/Todo/TodoFilter";
+import ConfirmDeletePopup from "../components/ConfirmDelete/ConfirmDeletePopup";
 import "./index.css";
 import "./App.css";
 
@@ -168,7 +168,11 @@ function App() {
         editTodo={editTodo}
       />
 
-      {showPopup && <ConfirmDeletePopup onConfirm={confirmDelete} onCancel={cancelDelete} />}
+      {showPopup && (
+        <div className="popup-background">
+          <ConfirmDeletePopup onConfirm={confirmDelete} onCancel={cancelDelete} />
+        </div>
+      )}
     </div>
   );
 }
