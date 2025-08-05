@@ -1,12 +1,16 @@
+// Importo hooks de React para manejar el estado y efectos secundarios.
 import { useState, useEffect } from "react";
-import { TodoForm } from "../components/Todo/TodoForm";
-import { TodoList } from "../components/Todo/TodoList";
-import { TodoFilter } from "../components/Todo/TodoFilter";
-import ConfirmDeletePopup from "../components/ConfirmDelete/ConfirmDeletePopup";
+// Importo componentes para el formulario, lista y filtro de tareas.
+import { TodoForm } from "../components/TodoForm";
+import { TodoList } from "../components/TodoList";
+import { TodoFilter } from "../components/TodoFilter";
+import ConfirmDeletePopup from "../components/ConfirmDeletePopup";
+// Importo estilos globales de la aplicación.
 import "./index.css";
 import "./App.css";
 
 function App() {
+  // Carga las tareas desde el almacenamiento local.
   const loadTodosFromLocalStorage = () => {
     try {
       const saved = localStorage.getItem("todos");
@@ -20,15 +24,18 @@ function App() {
     }
   };
 
+  // Estado para las tareas, filtro, popup y tareas a eliminar.
   const [todos, setTodos] = useState(() => loadTodosFromLocalStorage());
   const [filter, setFilter] = useState("pendientes");
   const [showPopup, setShowPopup] = useState(false);
   const [todoToDelete, setTodoToDelete] = useState(null);
 
+  // Efecto para guardar las tareas en el almacenamiento local cuando cambian.
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(todos));
   }, [todos]);
 
+  // Función que agrega una nueva tarea.
   const addTodo = (text) => {
     if (isTodoExists(text)) {
       alert("La tarea ya fue cargada");
@@ -42,6 +49,7 @@ function App() {
     }));
   };
 
+  // Función que verifica si una tarea ya existe.
   const isTodoExists = (text) => {
     const normalizedText = text.toLowerCase();
     return (
@@ -50,6 +58,7 @@ function App() {
     );
   };
 
+  // Función que crea un objeto de tarea.
   const createTodoObject = (text) => ({
     id: Date.now(),
     text,
@@ -57,6 +66,7 @@ function App() {
     createdAt: new Date().toLocaleString(),
   });
 
+  // Función que alterna el estado de completado de una tarea.
   const toggleComplete = (id) => {
     setTodos((prev) => {
       const activeTodo = prev.active.find((todo) => todo.id === id);
@@ -73,21 +83,25 @@ function App() {
     });
   };
 
+  // Función que mueve una tarea a completadas.
   const moveTodoToCompleted = (prev, todo, id) => ({
     active: prev.active.filter((t) => t.id !== id),
     completed: [...prev.completed, { ...todo, completed: true }],
   });
 
+  // Función que mueve una tarea a activas
   const moveTodoToActive = (prev, todo, id) => ({
     active: [...prev.active, { ...todo, completed: false }],
     completed: prev.completed.filter((t) => t.id !== id),
   });
 
+  // Funcion que elimina una tarea
   const deleteTodo = (id) => {
     setShowPopup(true);
     setTodoToDelete(id);
   };
 
+  // Funcion para confirmar la eliminacion de una tarea
   const confirmDelete = () => {
     setTodos((prev) => ({
       active: prev.active.filter((todo) => todo.id !== todoToDelete),
@@ -96,11 +110,13 @@ function App() {
     cancelDelete();
   };
 
+  // Funcion para cancelar la eliminacion de una tarea
   const cancelDelete = () => {
     setShowPopup(false);
     setTodoToDelete(null);
   };
 
+  // Funcion para filter las tareas segun el estado
   const filteredTodos = () => {
     switch (filter) {
       case "completadas":
@@ -114,6 +130,7 @@ function App() {
     }
   };
 
+  // Funcion para editar el texto de una tarea
   const editTodo = (id, newText) => {
     setTodos((prev) => {
       const activeTodoIndex = prev.active.findIndex((todo) => todo.id === id);

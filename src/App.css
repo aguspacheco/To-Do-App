@@ -16,9 +16,32 @@ body {
   border-radius: 0.375rem;
   transition: all 0.15s ease;
   cursor: pointer;
+  background-color: #7c3aed; /* Fondo transparente */
+  color: white; /* Color del texto violeta */
+}
+
+.button:hover {
+  background-color: wheat; /* Fondo violeta al pasar el mouse */
+  color: #7c3aed; /* Cambiar el color del texto a blanco al pasar el mouse */
 }
 
 .button-primary {
   background-color: #7c3aed;
   color: white;
+}
+
+.flex {
+  display: flex;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.gap-2 {
+  gap: 0.5rem;
 }

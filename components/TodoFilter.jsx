@@ -1,4 +1,4 @@
-export const TodoFilter = ({ filter, setFilter, activeCount = 0, completedCount = 0 }) => {
+export const TodoFilter = ({ setFilter, activeCount = 0, completedCount = 0 }) => {
   const filterOptions = [
     {
       type: "todas",
@@ -20,8 +20,7 @@ export const TodoFilter = ({ filter, setFilter, activeCount = 0, completedCount 
         <button
           key={option.type}
           onClick={() => setFilter(option.type)}
-          className={`px-4 py-2 text-sm rounded-full font-medium transition-colors button
-              `}
+          className="px-4 py-2 text-sm rounded-full font-medium transition-colors button"
         >
           {option.label}
         </button>
