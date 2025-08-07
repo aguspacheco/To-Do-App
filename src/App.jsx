@@ -1,16 +1,18 @@
-// Importo hooks de React para manejar el estado y efectos secundarios.
+// Importación de hooks de React.
 import { useState, useEffect } from "react";
-// Importo componentes para el formulario, lista y filtro de tareas.
+
+// Importación de componentes.
 import { TodoForm } from "../components/TodoForm";
 import { TodoList } from "../components/TodoList";
 import { TodoFilter } from "../components/TodoFilter";
 import ConfirmDeletePopup from "../components/ConfirmDeletePopup";
-// Importo estilos globales de la aplicación.
+
+// Importación de estilos.
 import "./index.css";
 import "./App.css";
 
 function App() {
-  // Carga las tareas desde el almacenamiento local.
+  // Carga tareas desde localStorage.
   const loadTodosFromLocalStorage = () => {
     try {
       const saved = localStorage.getItem("todos");
@@ -24,18 +26,35 @@ function App() {
     }
   };
 
-  // Estado para las tareas, filtro, popup y tareas a eliminar.
-  const [todos, setTodos] = useState(() => loadTodosFromLocalStorage());
+  // Estado principal de la aplicación.
+  const [todos, setTodos] = useState(loadTodosFromLocalStorage);
   const [filter, setFilter] = useState("pendientes");
   const [showPopup, setShowPopup] = useState(false);
   const [todoToDelete, setTodoToDelete] = useState(null);
 
-  // Efecto para guardar las tareas en el almacenamiento local cuando cambian.
+  // Guarda tareas en localStorage cada vez que cambian.
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(todos));
   }, [todos]);
 
-  // Función que agrega una nueva tarea.
+  // Verifica si una tarea ya existe.
+  const isTodoExists = (text) => {
+    const normalized = text.toLowerCase();
+    return (
+      todos.active.some((todo) => todo.text.toLowerCase() === normalized) ||
+      todos.completed.some((todo) => todo.text.toLowerCase() === normalized)
+    );
+  };
+
+  // Crea un objeto de tarea nuevo.
+  const createTodoObject = (text) => ({
+    id: Date.now(),
+    text,
+    completed: false,
+    createdAt: new Date().toLocaleString(),
+  });
+
+  // Agrega una nueva tarea.
   const addTodo = (text) => {
     if (isTodoExists(text)) {
       alert("La tarea ya fue cargada");
@@ -49,59 +68,37 @@ function App() {
     }));
   };
 
-  // Función que verifica si una tarea ya existe.
-  const isTodoExists = (text) => {
-    const normalizedText = text.toLowerCase();
-    return (
-      todos.active.some((todo) => todo.text.toLowerCase() === normalizedText) ||
-      todos.completed.some((todo) => todo.text.toLowerCase() === normalizedText)
-    );
-  };
-
-  // Función que crea un objeto de tarea.
-  const createTodoObject = (text) => ({
-    id: Date.now(),
-    text,
-    completed: false,
-    createdAt: new Date().toLocaleString(),
-  });
-
-  // Función que alterna el estado de completado de una tarea.
+  // Alterna entre tarea completada y pendiente.
   const toggleComplete = (id) => {
     setTodos((prev) => {
-      const activeTodo = prev.active.find((todo) => todo.id === id);
-      if (activeTodo) {
-        return moveTodoToCompleted(prev, activeTodo, id);
+      const isActive = prev.active.find((todo) => todo.id === id);
+      const isCompleted = prev.completed.find((todo) => todo.id === id);
+
+      if (isActive) {
+        return {
+          active: prev.active.filter((t) => t.id !== id),
+          completed: [...prev.completed, { ...isActive, completed: true }],
+        };
       }
 
-      const completedTodo = prev.completed.find((todo) => todo.id === id);
-      if (completedTodo) {
-        return moveTodoToActive(prev, completedTodo, id);
+      if (isCompleted) {
+        return {
+          active: [...prev.active, { ...isCompleted, completed: false }],
+          completed: prev.completed.filter((t) => t.id !== id),
+        };
       }
 
       return prev;
     });
   };
 
-  // Función que mueve una tarea a completadas.
-  const moveTodoToCompleted = (prev, todo, id) => ({
-    active: prev.active.filter((t) => t.id !== id),
-    completed: [...prev.completed, { ...todo, completed: true }],
-  });
-
-  // Función que mueve una tarea a activas
-  const moveTodoToActive = (prev, todo, id) => ({
-    active: [...prev.active, { ...todo, completed: false }],
-    completed: prev.completed.filter((t) => t.id !== id),
-  });
-
-  // Funcion que elimina una tarea
+  // Muestra el popup de confirmación para eliminar una tarea.
   const deleteTodo = (id) => {
     setShowPopup(true);
     setTodoToDelete(id);
   };
 
-  // Funcion para confirmar la eliminacion de una tarea
+  // Confirma la eliminación de una tarea.
   const confirmDelete = () => {
     setTodos((prev) => ({
       active: prev.active.filter((todo) => todo.id !== todoToDelete),
@@ -110,53 +107,36 @@ function App() {
     cancelDelete();
   };
 
-  // Funcion para cancelar la eliminacion de una tarea
+  // Cancela la eliminación.
   const cancelDelete = () => {
     setShowPopup(false);
     setTodoToDelete(null);
   };
 
-  // Funcion para filter las tareas segun el estado
-  const filteredTodos = () => {
+  // Devuelve las tareas según el filtro activo.
+  const getFilteredTodos = () => {
     switch (filter) {
       case "completadas":
         return todos.completed;
-      case "pendientes":
-        return todos.active;
       case "todas":
         return [...todos.active, ...todos.completed];
+      case "pendientes":
       default:
         return todos.active;
     }
   };
 
-  // Funcion para editar el texto de una tarea
+  // Edita una tarea.
   const editTodo = (id, newText) => {
-    setTodos((prev) => {
-      const activeTodoIndex = prev.active.findIndex((todo) => todo.id === id);
-      if (activeTodoIndex >= 0) {
-        const updatedActiveTodos = [...prev.active];
-        updatedActiveTodos[activeTodoIndex] = {
-          ...updatedActiveTodos[activeTodoIndex],
-          text: newText,
-          createdAt: new Date().toLocaleString(),
-        };
-        return { ...prev, active: updatedActiveTodos };
-      }
+    const updateList = (list) =>
+      list.map((todo) =>
+        todo.id === id ? { ...todo, text: newText, createdAt: new Date().toLocaleString() } : todo
+      );
 
-      const completedTodoIndex = prev.completed.findIndex((todo) => todo.id === id);
-      if (completedTodoIndex >= 0) {
-        const updatedCompletedTodos = [...prev.completed];
-        updatedCompletedTodos[completedTodoIndex] = {
-          ...updatedCompletedTodos[completedTodoIndex],
-          text: newText,
-          createdAt: new Date().toLocaleString(),
-        };
-        return { ...prev, completed: updatedCompletedTodos };
-      }
-
-      return prev;
-    });
+    setTodos((prev) => ({
+      active: updateList(prev.active),
+      completed: updateList(prev.completed),
+    }));
   };
 
   return (
@@ -179,7 +159,7 @@ function App() {
       </div>
 
       <TodoList
-        todos={filteredTodos()}
+        todos={getFilteredTodos()}
         toggleComplete={toggleComplete}
         deleteTodo={deleteTodo}
         editTodo={editTodo}
