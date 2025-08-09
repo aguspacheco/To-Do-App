@@ -1,7 +1,7 @@
-// Importación de hooks de React.
+// Importación de hooks de React para manejar estado y efectos
 import { useState, useEffect } from "react";
 
-// Importación de componentes.
+// Importación de componentes funcionales.
 import { TodoForm } from "../components/TodoForm";
 import { TodoList } from "../components/TodoList";
 import { TodoFilter } from "../components/TodoFilter";
@@ -12,7 +12,11 @@ import "./index.css";
 import "./App.css";
 
 function App() {
-  // Carga tareas desde localStorage.
+  /**
+   *
+   * Carga tareas guardadas desde el localStorage
+   * Si no hay datos guaraddos o hay un error, devuelve arrays vacios
+   */
   const loadTodosFromLocalStorage = () => {
     try {
       const saved = localStorage.getItem("todos");
@@ -27,17 +31,27 @@ function App() {
   };
 
   // Estado principal de la aplicación.
+  // Tareas activas y completadas
   const [todos, setTodos] = useState(loadTodosFromLocalStorage);
+  // Filtro de visualizacion
   const [filter, setFilter] = useState("pendientes");
+  // Visibilidad del popup de confirmacion
   const [showPopup, setShowPopup] = useState(false);
+  // ID de la tarea a eliminar
   const [todoToDelete, setTodoToDelete] = useState(null);
 
-  // Guarda tareas en localStorage cada vez que cambian.
+  /**
+   * Efecto que guarda automaticamente los cambios en "todos" en localStorage
+   */
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(todos));
   }, [todos]);
 
-  // Verifica si una tarea ya existe.
+  /**
+   * Verifica si una tarea con el mismo texto ya existe
+   * @param {string} text - Texto de la nueva tarea
+   * @returns {boolean}
+   */
   const isTodoExists = (text) => {
     const normalized = text.toLowerCase();
     return (
@@ -46,7 +60,10 @@ function App() {
     );
   };
 
-  // Crea un objeto de tarea nuevo.
+  /**
+   * Crea un nuevo objeto de tarea con datos predefinidos
+   * @param {string} text - Texto de la tarea
+   */
   const createTodoObject = (text) => ({
     id: Date.now(),
     text,
@@ -54,7 +71,11 @@ function App() {
     createdAt: new Date().toLocaleString(),
   });
 
-  // Agrega una nueva tarea.
+  /**
+   * Agrega una nueva tarea si no existe una igual
+   * @param {string} text - Texto de la tarea
+   * @returns
+   */
   const addTodo = (text) => {
     if (isTodoExists(text)) {
       alert("La tarea ya fue cargada");
@@ -68,7 +89,10 @@ function App() {
     }));
   };
 
-  // Alterna entre tarea completada y pendiente.
+  /**
+   * Alterna el estado de una tarea entre activa y completada
+   * @param {number} id - ID de la tarea a modificar
+   */
   const toggleComplete = (id) => {
     setTodos((prev) => {
       const isActive = prev.active.find((todo) => todo.id === id);
@@ -92,13 +116,18 @@ function App() {
     });
   };
 
-  // Muestra el popup de confirmación para eliminar una tarea.
+  /**
+   * Muestra el popup de confirmacion para eliminar una tarea
+   * @param {number} id - ID de la tarea a eliminar
+   */
   const deleteTodo = (id) => {
     setShowPopup(true);
     setTodoToDelete(id);
   };
 
-  // Confirma la eliminación de una tarea.
+  /**
+   * Confirma y ejecuta la eliminacion de una tarea
+   */
   const confirmDelete = () => {
     setTodos((prev) => ({
       active: prev.active.filter((todo) => todo.id !== todoToDelete),
@@ -107,13 +136,18 @@ function App() {
     cancelDelete();
   };
 
-  // Cancela la eliminación.
+  /**
+   * Cancela la operacion de eliminacion
+   */
   const cancelDelete = () => {
     setShowPopup(false);
     setTodoToDelete(null);
   };
 
-  // Devuelve las tareas según el filtro activo.
+  /**
+   * Retorna las tareas filtradas segun el tipo de filtro seleccionado
+   * @returns {Array} - Lista de tareas filtradas
+   */
   const getFilteredTodos = () => {
     switch (filter) {
       case "completadas":
@@ -126,7 +160,11 @@ function App() {
     }
   };
 
-  // Edita una tarea.
+  /**
+   * Edita el texto de una tarea activa o completada
+   * @param {number} id - ID de la tarea a editar
+   * @param {string} newText - Nuevo texto para la tarea
+   */
   const editTodo = (id, newText) => {
     const updateList = (list) =>
       list.map((todo) =>
@@ -141,10 +179,12 @@ function App() {
 
   return (
     <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden border border-purple-200">
+      {/* Encabezado de la app */}
       <header className="bg-gradient-to-r from-purple-600 to-indigo-600 p-6">
         <h1 className="text-3xl font-bold text-white text-center">Mis Tareas</h1>
       </header>
 
+      {/* Filtro de tareas */}
       <div className="p-6 border-b border-purple-100">
         <TodoForm addTodo={addTodo} />
       </div>
@@ -158,6 +198,7 @@ function App() {
         />
       </div>
 
+      {/* LIsta de tareas segun el filtro */}
       <TodoList
         todos={getFilteredTodos()}
         toggleComplete={toggleComplete}
@@ -165,6 +206,7 @@ function App() {
         editTodo={editTodo}
       />
 
+      {/* Popup de confirmacion para eliminar una tarea */}
       {showPopup && (
         <div className="popup-background">
           <ConfirmDeletePopup onConfirm={confirmDelete} onCancel={cancelDelete} />
