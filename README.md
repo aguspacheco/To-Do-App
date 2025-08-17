@@ -5,7 +5,7 @@ Permite agregar, editar, completar, filtrar y eliminar tareas con confirmación.
 
 # ToDoList
 
-<img height="100" alt="Puntero" width="100%" src="README/marquee.svg"/>
+<img height="100" alt="ToDoList" width="100%" src="README/marquee.svg"/>
 
 <div>
 
